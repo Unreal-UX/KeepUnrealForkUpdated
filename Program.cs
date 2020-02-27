@@ -11,8 +11,6 @@ namespace Merge_Pull_Request
     {
         static async System.Threading.Tasks.Task Main(string[] args)
         {
-            bool GitHubStuff = true;
-
             if(args.Length < 2)
             {
                 Console.WriteLine("need atleast 3 args");
