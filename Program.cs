@@ -57,7 +57,7 @@ namespace Merge_Pull_Request
 
             Console.WriteLine(" --- ");
 
-            if(!CleanlyLoggedIn)
+            if(!LoggedIn)
             {
                 Console.WriteLine("GitHub Login State unclear, Exiting");
                 return;
