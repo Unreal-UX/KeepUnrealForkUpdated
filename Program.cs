@@ -49,6 +49,10 @@ namespace Merge_Pull_Request
             }catch(Exception ex){
                 Console.WriteLine(ex.ToString());
                 Console.WriteLine("... Loading Failed");
+                Console.WriteLine("You likely forgot to set..");
+                Console.WriteLine("  env:");
+                Console.WriteLine("    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}");
+                Console.WriteLine(" in your .yml file");
                 LoggedIn = false;
             }
             
