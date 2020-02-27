@@ -81,6 +81,9 @@ namespace Merge_Pull_Request
                     {
                         shouldmerge = true;
                     }
+                    
+                    // Add your own conditions above
+
                     if(shouldmerge)
                     {
                         MergePullRequest mpr = new MergePullRequest();
