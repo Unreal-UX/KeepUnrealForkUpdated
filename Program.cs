@@ -63,8 +63,6 @@ namespace Merge_Pull_Request
                 return;
             }
             
-            string PRname = "From " + CurrentBranch + " to " + GHPages;
-            
             bool shouldmerge = false;
 
             var prs = await github.PullRequest.GetAllForRepository(Owner,Repo);
@@ -74,10 +72,6 @@ namespace Merge_Pull_Request
                 foreach(Label l in pr.Labels)
                 {
                     if(l.Name == AutoMergeLabel)
-                    {
-                        shouldmerge = true;
-                    }
-                    if(false && pr.Title.Contains(PRname))
                     {
                         shouldmerge = true;
                     }
