@@ -16,15 +16,15 @@ namespace Merge_Pull_Request
                 Console.WriteLine("need atleast 3 args");
                 return;
             }
-            var Repo = "Repo";
+            var Owner = "Owner";
             if(args[0] is string)
             {
-                Repo = args[0] as string;
+                Owner = args[0] as string;
             }
-            var Owner = "Owner";
+            var Repo = "Repo";
             if(args[1] is string)
             {
-                Owner = args[1] as string;
+                Repo = args[1] as string;
             }
             var AutoMergeLabel = "automerge";
             if(args[2] is string)
