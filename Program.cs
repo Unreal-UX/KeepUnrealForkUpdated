@@ -42,7 +42,7 @@ namespace Merge_Pull_Request
             try{
                 Console.WriteLine("Loading github...");
                 string secretkey = Environment.GetEnvironmentVariable("GITHUB_TOKEN");
-                github = new GitHubClient(new ProductHeaderValue("Pauliver-ImageTool"))
+                github = new GitHubClient(new ProductHeaderValue("Pauliver-MergePR-By-Label"))
                 {
                     Credentials = new Credentials(secretkey)
                 };
