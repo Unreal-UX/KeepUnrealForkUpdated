@@ -3,8 +3,6 @@ using System.Text.Encodings.Web;
 using System.Text.Unicode;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using GraphQL;
-using GraphQLParser;
 using Octokit;
 
 namespace Merge_Pull_Request
