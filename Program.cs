@@ -73,6 +73,8 @@ namespace Merge_Pull_Request
             {
                 foreach(Label l in pr.Labels)
                 {
+                    shouldmerge = false; // Reset state in a loop
+
                     if(l.Name == AutoMergeLabel)
                     {
                         shouldmerge = true;
@@ -94,6 +96,7 @@ namespace Merge_Pull_Request
                             Console.WriteLine("Merge Failed");
                         }
                     }
+                    shouldmerge = false; // Reset state in a loop
                 }
             
                 Console.WriteLine("And we are done here");
