@@ -92,10 +92,10 @@ namespace Merge_Pull_Request
                 if(shouldmerge)
                 {
                     MergePullRequest mpr = new MergePullRequest();
-                    mpr.CommitMessage = CommitMessage;
+                    mpr.CommitMessage = "Times up, let's do this!";
                     mpr.MergeMethod = PullRequestMergeMethod.Merge;
                     
-                    var merge = await github.PullRequest.Merge(owner,repo,pr.Number,mpr);
+                    var merge = await github.PullRequest.Merge(Owner,Repo,pr.Number,mpr);
                     if(merge.Merged)
                     {
                         Console.WriteLine("-> " + pr.Number + " - Successfully Merged");
