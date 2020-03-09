@@ -71,36 +71,41 @@ namespace Merge_Pull_Request
                 
             foreach(PullRequest pr in prs)
             {
+                shouldmerge = false; // Reset state in a loop
+                Console.WriteLine("Found PR: " + pr.Title);
+
                 foreach(Label l in pr.Labels)
                 {
-                    shouldmerge = false; // Reset state in a loop
 
                     if(l.Name == AutoMergeLabel)
                     {
                         shouldmerge = true;
                     }
                     
-                    // Add your own conditions above
-
-                    if(shouldmerge)
+                    if(false)// Add your own conditions here, or perhaps a "NEVER MERGE" label?
                     {
-                        MergePullRequest mpr = new MergePullRequest();
-                        mpr.CommitMessage = "Time's up, let's do this";
-                        mpr.MergeMethod = PullRequestMergeMethod.Merge;
-                        
-                        var merge = await github.PullRequest.Merge(Owner,Repo,pr.Number,mpr);
-                        if(merge.Merged)
-                        {
-                            Console.WriteLine("Successfully Merged");
-                        }else{
-                            Console.WriteLine("Merge Failed");
-                        }
+                        shouldmerge = true;
                     }
-                    shouldmerge = false; // Reset state in a loop
+
                 }
-            
-                Console.WriteLine("And we are done here");
+                
+                if(shouldmerge)
+                {
+                    MergePullRequest mpr = new MergePullRequest();
+                    mpr.CommitMessage = CommitMessage;
+                    mpr.MergeMethod = PullRequestMergeMethod.Merge;
+                    
+                    var merge = await github.PullRequest.Merge(owner,repo,pr.Number,mpr);
+                    if(merge.Merged)
+                    {
+                        Console.WriteLine("-> " + pr.Number + " - Successfully Merged");
+                    }else{
+                        Console.WriteLine("-> " + pr.Number + " - Merge Failed");
+                    }
+                }
+                shouldmerge = false; // Reset state in a loop
             }
+            Console.WriteLine("And we are done here");
         }
     }
 }
