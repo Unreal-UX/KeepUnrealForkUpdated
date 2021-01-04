@@ -4,10 +4,10 @@ using System.Text.Unicode;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Octokit;
-using OKW;
-using OctoKitWrapper;
+//using OKW;
 
-namespace Merge_Pull_Request
+
+namespace KeepUE4Updated
 {
     class Program
     {
@@ -42,9 +42,9 @@ namespace Merge_Pull_Request
             try{
                 Console.WriteLine("Loading github...");
                 string secretkey = Environment.GetEnvironmentVariable("GITHUB_TOKEN");
-                github = new GitHubClient(new ProductHeaderValue("Pauliver-MergePR-By-Label"))
+                github = new GitHubClient(new ProductHeaderValue("KeepUEForkUpdated"))
                 {
-                    Credentials = new Credentials(secretkey)
+                    Credentials = new Credentials(secretkey),
                 };
                 LoggedIn = true; // or maybe
                 Console.WriteLine("... Loaded");
@@ -53,7 +53,7 @@ namespace Merge_Pull_Request
                 Console.WriteLine("... Loading Failed");
                 Console.WriteLine("You likely forgot to set..");
                 Console.WriteLine("  env:");
-                Console.WriteLine("    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}");
+                Console.WriteLine("    GITHUB_TOKEN: ${{ secrets.PAT }} //use a PAT not GITHUB_TOKEN");
                 Console.WriteLine(" in your .yml file");
                 LoggedIn = false;
             }
