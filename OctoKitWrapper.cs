@@ -412,6 +412,28 @@ namespace OKW
             return FoundAnyStale;
         }
 
+        async public ValueTask<bool> CrossBranchPR(string PRname, string OriginOwner, string OriginRepo,string OriginBranch, string TargetOwner, string TargetRepo, string TargetBranch)
+        {
+            TestCleanlyLoggedIn();
+            Console.WriteLine("PR: " + PRname);
+            Console.WriteLine("OriginOwner: " + OriginOwner);
+            Console.WriteLine("OriginRepo: " + OriginRepo);
+            Console.WriteLine("OriginBranch: " + OriginBranch);
+            Console.WriteLine("TargetOwner: " + TargetOwner);
+            Console.WriteLine("TargetRepo: " + TargetRepo);
+            Console.WriteLine("TargetBranch: " + TargetBranch);
+
+            var Origin_Repo = await github.Repository.Get(OriginOwner,OriginRepo);
+            var target_repo = await github.Repository.Get(TargetOwner,TargetRepo);
+
+
+            NewPullRequest newPullRequest= new NewPullRequest(PRname,OriginRepo + ":" + OriginBranch,TargetBranch);
+
+            var PullRequest = await github.PullRequest.Create(target_repo.Id, newPullRequest);
+
+            return true;
+        }
+
         async public ValueTask<bool> CreateAndLabelPullRequest(string PRname)
         {
             TestCleanlyLoggedIn();

@@ -18,7 +18,9 @@ namespace KeepUE4Updated
             var AutoMerge = true;
             var SourceOwner = "EpicGames";
             var SourceRepo = "UnrealEngine";
+            var SourceBranch = "release";
             var PRNAME = "UE4-Auto-Merge";
+            var TargetBranch = "release";
             if(args.Length < 2)
             {
                 Console.WriteLine("need atleast 2 args");
@@ -34,19 +36,27 @@ namespace KeepUE4Updated
             }
             if(args[2] is string)
             {
+                Repo = args[2] as string;
+            }
+            if(args[3] is string)
+            {
                 try{
-                    AutoMerge = Boolean.Parse( args[2] as string);
+                    AutoMerge = Boolean.Parse( args[3] as string);
                 }catch{
                     Console.WriteLine("Arg 3 was not a boolean");
                 }
             }
-            if(args[3] is string)
-            {
-                SourceOwner = args[3];
-            }
             if(args[4] is string)
             {
-                SourceRepo = args[4];
+                SourceOwner = args[4];
+            }
+            if(args[5] is string)
+            {
+                SourceRepo = args[5];
+            }
+            if(args[6] is string)
+            {
+                TargetBranch = args[6];
             }
 
             OKW.OctoKitWrapper github = new OKW.OctoKitWrapper(false);
@@ -62,7 +72,7 @@ namespace KeepUE4Updated
 
             await github.CloseStalePullRequests(PRNAME);
 
-            await github.CreateAndLabelPullRequest(PRNAME);
+            await github.CrossBranchPR(PRNAME,SourceOwner,SourceRepo,SourceBranch,Owner,Repo,TargetBranch);
             
             await github.MergePullRequest("Another UE4 Branch Updated");
 
