@@ -4,6 +4,8 @@ using System.Text.Unicode;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Octokit;
+using OKW;
+using OctoKitWrapper;
 
 namespace Merge_Pull_Request
 {
