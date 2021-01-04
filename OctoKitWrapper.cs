@@ -73,12 +73,16 @@ namespace OKW
             return true;
         }
 
-        public bool AttemptLogin()
+        public bool AttemptLogin(string ProductHeaderValue = "Perfect-Is-Enamy-Of-Good-Enough" )
         {
             try{
                 Console.WriteLine("Loading github...");
                 string secretkey = Environment.GetEnvironmentVariable("GITHUB_TOKEN");
-                github = new GitHubClient(new ProductHeaderValue("Perfect-Is-Enamy-Of-Good-Enough"))
+                if(secretkey is null)
+                {
+                    Console.WriteLine("GITHUB_TOKEN : not set");
+                }
+                github = new GitHubClient(new ProductHeaderValue(ProductHeaderValue))
                 {
                     Credentials = new Credentials(secretkey)
                 };
@@ -591,8 +595,4 @@ namespace OKW
         
     }
 
-    public class PaulsOKSIngleton
-    {
-
-    }
 }

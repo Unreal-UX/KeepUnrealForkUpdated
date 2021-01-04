@@ -13,101 +13,59 @@ namespace KeepUE4Updated
     {
         static async System.Threading.Tasks.Task Main(string[] args)
         {
+            var Owner = "Owner";
+            var Repo = "Repo";
+            var AutoMerge = true;
+            var SourceOwner = "EpicGames";
+            var SourceRepo = "UnrealEngine";
+            var PRNAME = "UE4-Auto-Merge";
             if(args.Length < 2)
             {
-                Console.WriteLine("need atleast 3 args");
+                Console.WriteLine("need atleast 2 args");
                 return;
             }
-            var Owner = "Owner";
             if(args[0] is string)
             {
                 Owner = args[0] as string;
             }
-            var Repo = "Repo";
             if(args[1] is string)
             {
                 Repo = args[1] as string;
             }
-            var AutoMergeLabel = "automerge";
             if(args[2] is string)
             {
-                AutoMergeLabel = args[2] as string;
-            }
-
-            GitHubClient github = null;
-            bool LoggedIn = false;
-
-            // come back and make every arg beyond 3 also a valid label maybe?
-            
-            try{
-                Console.WriteLine("Loading github...");
-                string secretkey = Environment.GetEnvironmentVariable("GITHUB_TOKEN");
-                github = new GitHubClient(new ProductHeaderValue("KeepUEForkUpdated"))
-                {
-                    Credentials = new Credentials(secretkey),
-                };
-                LoggedIn = true; // or maybe
-                Console.WriteLine("... Loaded");
-            }catch(Exception ex){
-                Console.WriteLine(ex.ToString());
-                Console.WriteLine("... Loading Failed");
-                Console.WriteLine("You likely forgot to set..");
-                Console.WriteLine("  env:");
-                Console.WriteLine("    GITHUB_TOKEN: ${{ secrets.PAT }} //use a PAT not GITHUB_TOKEN");
-                Console.WriteLine(" in your .yml file");
-                LoggedIn = false;
-            }
-            
-
-            Console.WriteLine(" --- ");
-
-            if(!LoggedIn)
-            {
-                Console.WriteLine("GitHub Login State unclear, Exiting");
-                return;
-            }
-            
-            bool shouldmerge = false;
-
-            var prs = await github.PullRequest.GetAllForRepository(Owner,Repo);
-                
-            foreach(PullRequest pr in prs)
-            {
-                shouldmerge = false; // Reset state in a loop
-                Console.WriteLine("Found PR: " + pr.Title);
-
-                foreach(Label l in pr.Labels)
-                {
-
-                    if(l.Name == AutoMergeLabel)
-                    {
-                        shouldmerge = true;
-                    }
-                    
-                    if(false)// Add your own conditions here, or perhaps a "NEVER MERGE" label?
-                    {
-                        shouldmerge = true;
-                    }
-
+                try{
+                    AutoMerge = Boolean.Parse( args[2] as string);
+                }catch{
+                    Console.WriteLine("Arg 3 was not a boolean");
                 }
-                
-                if(shouldmerge)
-                {
-                    MergePullRequest mpr = new MergePullRequest();
-                    mpr.CommitMessage = "Times up, let's do this!";
-                    mpr.MergeMethod = PullRequestMergeMethod.Merge;
-                    
-                    var merge = await github.PullRequest.Merge(Owner,Repo,pr.Number,mpr);
-                    if(merge.Merged)
-                    {
-                        Console.WriteLine("-> " + pr.Number + " - Successfully Merged");
-                    }else{
-                        Console.WriteLine("-> " + pr.Number + " - Merge Failed");
-                    }
-                }
-                shouldmerge = false; // Reset state in a loop
             }
-            Console.WriteLine("And we are done here");
+            if(args[3] is string)
+            {
+                SourceOwner = args[3];
+            }
+            if(args[4] is string)
+            {
+                SourceRepo = args[4];
+            }
+
+            OKW.OctoKitWrapper github = new OKW.OctoKitWrapper(false);
+            
+            github.SetOwnerAndRepo(Owner,Repo);
+
+            github.AttemptLogin("KeepUEForkUpdated");
+   
+            if(!github.CleanlyLoggedIn)
+            {
+                Console.WriteLine("GitHub Login Failed");
+            }
+
+            await github.CloseStalePullRequests(PRNAME);
+
+            await github.CreateAndLabelPullRequest(PRNAME);
+            
+            await github.MergePullRequest("Another UE4 Branch Updated");
+
         }
     }
 }
