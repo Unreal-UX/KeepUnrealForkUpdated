@@ -6,7 +6,7 @@ This Action (when completed) will create PR's to update your branches as needed
 
 
 ```yml
-name: Sync Fork
+name: Create and Merge a PR of ## to this Repo
 
 on:
   schedule:
