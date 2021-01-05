@@ -30,7 +30,7 @@ jobs:
 
     steps:
     # Step 1: run a standard checkout action, provided by github
-    - name: Checkout Image Tools
+    - name: Checkout UE4 Fork tool
       uses: actions/checkout@v2
       with:
         repository: Unreal-UX/KeepUnrealForkUpdated
@@ -42,7 +42,7 @@ jobs:
     - name: Restore Dependancies
       run: dotnet restore UE4Tools/
 
-    - name: Build Image Tools
+    - name: Build UE4 Fork toolo
       run: dotnet build UE4Tools/ --configuration Release
       
     - name: Attempting to create and merge PR
