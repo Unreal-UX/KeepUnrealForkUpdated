@@ -431,6 +431,8 @@ namespace OKW
 
             var PullRequest = await github.PullRequest.Create(target_repo.Id, newPullRequest);
 
+            Console.WriteLine(PullRequest.Url);
+
             return true;
         }
 
