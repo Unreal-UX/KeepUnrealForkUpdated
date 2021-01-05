@@ -16,7 +16,7 @@ on:
 
 env:
     Owner: Pauliver 
-    Repo: UE 
+    Repo: UnrealEngine 
     Branch: "4.26" 
     ForceMerge: true 
     Source_Owner: EpicGames 
