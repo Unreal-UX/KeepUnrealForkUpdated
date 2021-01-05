@@ -427,7 +427,7 @@ namespace OKW
             var target_repo = await github.Repository.Get(TargetOwner,TargetRepo);
 
 
-            NewPullRequest newPullRequest= new NewPullRequest(PRname,OriginRepo + ":" + OriginBranch,TargetBranch);
+            NewPullRequest newPullRequest= new NewPullRequest(PRname,OriginOwner + ":" + OriginBranch,TargetBranch);
 
             var PullRequest = await github.PullRequest.Create(target_repo.Id, newPullRequest);
 

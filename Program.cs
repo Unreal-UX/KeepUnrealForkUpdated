@@ -36,7 +36,7 @@ namespace KeepUE4Updated
             }
             if(args[2] is string)
             {
-                Repo = args[2] as string;
+                TargetBranch = args[2] as string;
             }
             if(args[3] is string)
             {
@@ -56,7 +56,7 @@ namespace KeepUE4Updated
             }
             if(args[6] is string)
             {
-                TargetBranch = args[6];
+                SourceBranch = args[6];
             }
 
             OKW.OctoKitWrapper github = new OKW.OctoKitWrapper(false);
