@@ -152,6 +152,11 @@ namespace OKW
             return true;
         } 
 
+        public void SetAutoMergeLabel(string p_autoMergeLabel = "automerge")
+        {
+            this.AutoMergeLabel = p_autoMergeLabel;
+        }
+
         async public ValueTask<bool> CommitContainedImages(System.IO.DirectoryInfo GalleryPath, int commit_num = -1)
         {
             TestCleanlyLoggedIn();
@@ -423,15 +428,39 @@ namespace OKW
             Console.WriteLine("TargetRepo: " + TargetRepo);
             Console.WriteLine("TargetBranch: " + TargetBranch);
 
-            var Origin_Repo = await github.Repository.Get(OriginOwner,OriginRepo);
             var target_repo = await github.Repository.Get(TargetOwner,TargetRepo);
 
+            //var Origin_Branch = await github.Repository.Branch.Get(OriginOwner, OriginRepo, OriginBranch);
 
-            NewPullRequest newPullRequest= new NewPullRequest(PRname,OriginOwner + ":" + OriginBranch,TargetBranch);
+            try{
+                NewPullRequest newPullRequest= new NewPullRequest(PRname,OriginOwner + ":" + OriginBranch, TargetBranch); DecrementAPICallsBy();
+                newPullRequest.MaintainerCanModify = false;
+                var PullRequest = await github.PullRequest.Create(target_repo.Id, newPullRequest); DecrementAPICallsBy();
 
-            var PullRequest = await github.PullRequest.Create(target_repo.Id, newPullRequest);
-
-            Console.WriteLine(PullRequest.Url);
+                Console.WriteLine(PullRequest.Url);
+                
+                 var issue = await github.Issue.Get(owner, repo, PullRequest.Number); DecrementAPICallsBy();
+                if(issue != null) //https://octokitnet.readthedocs.io/en/latest/issues/
+                {
+                    var issueUpdate = issue.ToUpdate();
+                    if(issueUpdate != null)
+                    {
+                        issueUpdate.AddLabel(AutoMergeLabel);
+                        var labeladded = await github.Issue.Update(TargetOwner, TargetRepo, PullRequest.Number, issueUpdate); DecrementAPICallsBy();
+                        Console.WriteLine("Label Added: " + AutoMergeLabel);
+                    }
+                }
+            }catch(Octokit.ApiValidationException ave)
+            {
+                cleanlyLoggedIn = false;
+                Console.WriteLine(ave);
+                return false;
+            }catch(Exception ex)
+            {
+                cleanlyLoggedIn = false;
+                Console.WriteLine(ex);
+                return false;
+            }
 
             return true;
         }

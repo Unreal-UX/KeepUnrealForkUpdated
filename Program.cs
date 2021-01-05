@@ -76,18 +76,22 @@ namespace KeepUE4Updated
                 Console.WriteLine("GitHub Login Failed");
             }
 
+            github.SetAutoMergeLabel();
+
             Console.WriteLine("");
             Console.WriteLine("Closing Stale Pull Request");
             await github.CloseStalePullRequests(PRNAME);
 
             Console.WriteLine("");
             Console.WriteLine("Creating cross branch PR");
-            await github.CrossBranchPR(PRNAME,SourceOwner,SourceRepo,SourceBranch,Owner,Repo,TargetBranch);
+            bool XBranchPr = await github.CrossBranchPR(PRNAME,SourceOwner,SourceRepo,SourceBranch,Owner,Repo,TargetBranch);
 
-            Console.WriteLine("");
-            Console.WriteLine("Merging Pull requests");            
-            await github.MergePullRequest("Another UE4 Branch Updated");
-
+            if(AutoMerge && XBranchPr)
+            {
+                Console.WriteLine("");
+                Console.WriteLine("Merging Pull requests");            
+                await github.MergePullRequest("Another UE4 Branch Updated");
+            }
 
             Console.WriteLine("");
             Console.WriteLine("Exiting");
