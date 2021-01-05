@@ -59,12 +59,15 @@ namespace KeepUE4Updated
                 SourceBranch = args[6];
             }
 
+            Console.WriteLine("");
             Console.WriteLine("Creating GitHub Client");
             OKW.OctoKitWrapper github = new OKW.OctoKitWrapper(false);
             
+            Console.WriteLine("");
             Console.WriteLine("Setting Owner and Repo");
             github.SetOwnerAndRepo(Owner,Repo);
 
+            Console.WriteLine("");
             Console.WriteLine("Attempting Login");
             github.AttemptLogin("KeepUEForkUpdated");
    
@@ -73,17 +76,20 @@ namespace KeepUE4Updated
                 Console.WriteLine("GitHub Login Failed");
             }
 
-
+            Console.WriteLine("");
             Console.WriteLine("Closing Stale Pull Request");
             await github.CloseStalePullRequests(PRNAME);
 
+            Console.WriteLine("");
             Console.WriteLine("Creating cross branch PR");
             await github.CrossBranchPR(PRNAME,SourceOwner,SourceRepo,SourceBranch,Owner,Repo,TargetBranch);
 
+            Console.WriteLine("");
             Console.WriteLine("Merging Pull requests");            
             await github.MergePullRequest("Another UE4 Branch Updated");
 
 
+            Console.WriteLine("");
             Console.WriteLine("Exiting");
         }
     }
