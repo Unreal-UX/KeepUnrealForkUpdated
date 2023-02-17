@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>netcoreapp6.1</TargetFrameworks>
+    <TargetFrameworks>netcoreapp6.0</TargetFrameworks>
     <RootNamespace>KeepUE4Updated</RootNamespace>
   </PropertyGroup>
 
