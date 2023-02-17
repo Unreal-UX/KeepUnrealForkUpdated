@@ -4,108 +4,97 @@ using System.Text.Unicode;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Octokit;
+//using OKW;
 
-namespace Merge_Pull_Request
+
+namespace KeepUE4Updated
 {
     class Program
     {
         static async System.Threading.Tasks.Task Main(string[] args)
         {
+            var Owner = "Owner";
+            var Repo = "Repo";
+            var AutoMerge = true;
+            var SourceOwner = "EpicGames";
+            var SourceRepo = "UnrealEngine";
+            var SourceBranch = "release";
+            var PRNAME = "UE4-Auto-Merge";
+            var TargetBranch = "release";
             if(args.Length < 2)
             {
-                Console.WriteLine("need atleast 3 args");
+                Console.WriteLine("need atleast 2 args");
                 return;
             }
-            var Owner = "Owner";
             if(args[0] is string)
             {
                 Owner = args[0] as string;
             }
-            var Repo = "Repo";
             if(args[1] is string)
             {
                 Repo = args[1] as string;
             }
-            var AutoMergeLabel = "automerge";
             if(args[2] is string)
             {
-                AutoMergeLabel = args[2] as string;
+                TargetBranch = args[2] as string;
             }
-
-            GitHubClient github = null;
-            bool LoggedIn = false;
-
-            // come back and make every arg beyond 3 also a valid label maybe?
-            
-            try{
-                Console.WriteLine("Loading github...");
-                string secretkey = Environment.GetEnvironmentVariable("GITHUB_TOKEN");
-                github = new GitHubClient(new ProductHeaderValue("Pauliver-MergePR-By-Label"))
-                {
-                    Credentials = new Credentials(secretkey)
-                };
-                LoggedIn = true; // or maybe
-                Console.WriteLine("... Loaded");
-            }catch(Exception ex){
-                Console.WriteLine(ex.ToString());
-                Console.WriteLine("... Loading Failed");
-                Console.WriteLine("You likely forgot to set..");
-                Console.WriteLine("  env:");
-                Console.WriteLine("    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}");
-                Console.WriteLine(" in your .yml file");
-                LoggedIn = false;
-            }
-            
-
-            Console.WriteLine(" --- ");
-
-            if(!LoggedIn)
+            if(args[3] is string)
             {
-                Console.WriteLine("GitHub Login State unclear, Exiting");
-                return;
+                try{
+                    AutoMerge = Boolean.Parse( args[3] as string);
+                }catch{
+                    Console.WriteLine("Arg 3 was not a boolean");
+                }
             }
-            
-            bool shouldmerge = false;
-
-            var prs = await github.PullRequest.GetAllForRepository(Owner,Repo);
-                
-            foreach(PullRequest pr in prs)
+            if(args[4] is string)
             {
-                shouldmerge = false; // Reset state in a loop
-                Console.WriteLine("Found PR: " + pr.Title);
-
-                foreach(Label l in pr.Labels)
-                {
-
-                    if(l.Name == AutoMergeLabel)
-                    {
-                        shouldmerge = true;
-                    }
-                    
-                    if(false)// Add your own conditions here, or perhaps a "NEVER MERGE" label?
-                    {
-                        shouldmerge = true;
-                    }
-
-                }
-                
-                if(shouldmerge)
-                {
-                    MergePullRequest mpr = new MergePullRequest();
-                    mpr.CommitMessage = "Times up, let's do this!";
-                    mpr.MergeMethod = PullRequestMergeMethod.Merge;
-                    
-                    var merge = await github.PullRequest.Merge(Owner,Repo,pr.Number,mpr);
-                    if(merge.Merged)
-                    {
-                        Console.WriteLine("-> " + pr.Number + " - Successfully Merged");
-                    }else{
-                        Console.WriteLine("-> " + pr.Number + " - Merge Failed");
-                    }
-                }
-                shouldmerge = false; // Reset state in a loop
+                SourceOwner = args[4];
             }
-            Console.WriteLine("And we are done here");
+            if(args[5] is string)
+            {
+                SourceRepo = args[5];
+            }
+            if(args[6] is string)
+            {
+                SourceBranch = args[6];
+            }
+
+            Console.WriteLine("");
+            Console.WriteLine("Creating GitHub Client");
+            OKW.OctoKitWrapper github = new OKW.OctoKitWrapper(false);
+            
+            Console.WriteLine("");
+            Console.WriteLine("Setting Owner and Repo");
+            github.SetOwnerAndRepo(Owner,Repo);
+
+            Console.WriteLine("");
+            Console.WriteLine("Attempting Login");
+            github.AttemptLogin("KeepUEForkUpdated");
+   
+            if(!github.CleanlyLoggedIn)
+            {
+                Console.WriteLine("GitHub Login Failed");
+            }
+
+            github.SetAutoMergeLabel();
+
+            Console.WriteLine("");
+            Console.WriteLine("Closing Stale Pull Request");
+            await github.CloseStalePullRequests(PRNAME);
+
+            Console.WriteLine("");
+            Console.WriteLine("Creating cross branch PR");
+            bool XBranchPr = await github.CrossBranchPR(PRNAME,SourceOwner,SourceRepo,SourceBranch,Owner,Repo,TargetBranch);
+
+            if(AutoMerge && XBranchPr)
+            {
+                Console.WriteLine("");
+                Console.WriteLine("Merging Pull requests");            
+                await github.MergePullRequest("Another UE4 Branch Updated");
+            }
+
+            Console.WriteLine("");
+            Console.WriteLine("Exiting");
         }
     }
 }

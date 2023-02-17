@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
-    <RootNamespace>Merge_Pull_Request</RootNamespace>
+    <TargetFrameworks>netcoreapp6.1</TargetFrameworks>
+    <RootNamespace>KeepUE4Updated</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
