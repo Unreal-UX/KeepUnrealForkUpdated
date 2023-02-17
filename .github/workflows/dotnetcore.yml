@@ -6,7 +6,7 @@ jobs:
   build-the-thing:
     strategy:
       matrix:
-        dotnet: [ '6.0.14' ]
+        dotnet: [ '6.0.x' ]
         os: [ubuntu-latest, windows-latest, macos-latest]
       fail-fast: false
     runs-on: ubuntu-latest
